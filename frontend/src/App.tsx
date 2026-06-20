@@ -9,6 +9,7 @@ import {
 import toast, { Toaster } from "react-hot-toast";
 import "./index.css";
 import carinhoso from "./assets/carinhoso.mp3";
+import Popgame from "./Popgame"; 
 
 interface Milestone {
   chapter: string;
@@ -29,7 +30,7 @@ const MILESTONES: Milestone[] = [
     chapter: "Capítulo 2",
     title: "Netflix na biblioteca",
     description:
-      "Lembra quando a gente ia pra biblioteca de novo ficar assistindo coisinhas, Em principal o Stranger Things... Praticamente todo dia eu ia pra lá conferir se você estava, as vezes eu chegava tão cedo que ia embora da biblioteca e você aparecia depois, e inclusive, eu só assisti tudo por causa de você, queria ter visto tudo contigo, mas acontece. Enfim, ainda bem que você gosta das mesmas séries que eu, né?",
+      "Lembra quando a gente ia pra biblioteca de novo ficar assistindo coisinhas, Em principal o Stranger Things... Praticamente todo dia eu ia pra lá conferir se você estava, as vezes eu chegava tão cedo que ia embora da biblioteca e você aparecia depois, e inclusive, eu só assisti tudo por causa de você, quería ter visto tudo contigo, mas acontece. Enfim, ainda bem que você gosta das mesmas séries que eu, né?",
     image: "https://media.discordapp.net/attachments/1462535091342541005/1516779660095000616/fb72cea909cf79e9e6899ceae0dffb49.jpg?ex=6a33e2a3&is=6a329123&hm=75b18db006c01d71c8ad7c874f1155504775f8c9afc3bc8075e8528ce88a6604&=&format=webp&width=695&height=695", 
   },
   {
@@ -51,8 +52,7 @@ const MILESTONES: Milestone[] = [
 const MESSAGES: string[] = [
   "Você é o motivo dos meus dias melhores. 💜",
   "Cada maratona de filminho com você é, sem exagero, um dos meus momentos favoritos da semana.",
-  "Feliz aniversário pra quem transforma caos em lar.",
-  "Eu escolheria você de novo, em qualquer universo.",
+  "Eu escolheria você de novo, incondicionalmente, em qualquer universo.",
   "Te amo. Sem fórmula, sem medida, sem pressa.",
   "Segurar a sua mão faz qualquer lugar do mundo parecer o lugar certo pra estar. 🪐",
   "Obrigado por ser minha parceria de piadas bobas, de conversas sérias e de finais de tarde inteiros sem fazer nada.",
@@ -217,13 +217,96 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   return <span className="eyebrow">{children}</span>;
 }
 
+function TimeCounter() {
+  const reveal = useReveal();
+  const [timeMet, setTimeMet] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeDating, setTimeDating] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const dateMet = new Date("2025-09-17T00:00:00").getTime();
+    const dateDating = new Date("2025-12-30T00:00:00").getTime();
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+
+      const diffMet = now - dateMet;
+      const diffDating = now - dateDating;
+
+      const calcTime = (diff: number) => {
+        if (diff < 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        return {
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((diff % (1000 * 60)) / 1000),
+        };
+      };
+
+      setTimeMet(calcTime(diffMet));
+      setTimeDating(calcTime(diffDating));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <motion.section 
+      className="section universe-section" 
+      style={{ marginTop: "40px", marginBottom: "40px" }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
+      variants={reveal}
+    >
+      <div className="universe-content" style={{ textAlign: "center" }}>
+        <Eyebrow>Nosso Tempo</Eyebrow>
+        <h2 className="section-title" style={{ marginBottom: "20px" }}>Contando Cada Segundo</h2>
+        
+        <div style={{ display: "flex", flexDirection: "column", gap: "30px", marginTop: "20px" }}>
+          <div>
+            <h3 style={{ fontSize: "1.15rem", color: "var(--color-primary-dark)", marginBottom: "10px", fontWeight: 600 }}>
+              Desde que nos conhecemos (17/09/2025):
+            </h3>
+            <div style={{ display: "flex", justifyContent: "center", gap: "15px", flexWrap: "wrap" }}>
+              {Object.entries(timeMet).map(([unit, value]) => (
+                <div key={unit} style={{ background: "rgba(255,255,255,0.6)", padding: "10px 18px", borderRadius: "12px", border: "var(--candy-border)", minWidth: "70px" }}>
+                  <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text)" }}>{value}</div>
+                  <div style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--color-text-muted)", fontWeight: 500 }}>
+                    {unit === "days" ? "Dias" : unit === "hours" ? "Horas" : unit === "minutes" ? "Min" : "Seg"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 style={{ fontSize: "1.15rem", color: "var(--color-primary-dark)", marginBottom: "10px", fontWeight: 600 }}>
+              Desde o início do nosso namoro (30/12/2025):
+            </h3>
+            <div style={{ display: "flex", justifyContent: "center", gap: "15px", flexWrap: "wrap" }}>
+              {Object.entries(timeDating).map(([unit, value]) => (
+                <div key={unit} style={{ background: "rgba(255,255,255,0.6)", padding: "10px 18px", borderRadius: "12px", border: "var(--candy-border)", minWidth: "70px" }}>
+                  <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text)" }}>{value}</div>
+                  <div style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--color-text-muted)", fontWeight: 500 }}>
+                    {unit === "days" ? "Dias" : unit === "hours" ? "Horas" : unit === "minutes" ? "Min" : "Seg"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
 function HeroSection() {
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.18], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.18], [0, -60]);
 
-  const letters = "FELIZ ANIVERSÁRIO!".split("");
+  const letters = "NOSSA HISTÓRIA".split("");
 
   return (
     <header className="hero">
@@ -241,7 +324,7 @@ function HeroSection() {
           Para Paloma — hoje e sempre
         </motion.p>
 
-        <h1 className="hero-title" aria-label="Feliz Aniversário">
+        <h1 className="hero-title" aria-label="Nossa História">
           {letters.map((char, i) => (
             <motion.span
               key={i}
@@ -323,8 +406,7 @@ function LetterSection() {
           Digo e repito, que sou um rapaz de bastante sorte por ter encontrado você, por ter pedido para sentar ao seu lado, ter procurado sua fotinha no whatsapp dentre centenas, ter ido atrás de você pelo IFCE, ter te chamado para assistir série, e ter dado a Hello Kitty para você, não sei se te contei tudo, mas quando comprei a Hello Kitty, era apenas pensando em algo que eu gostaria de dar a alguém, na época a gente não se conhecia tanto então não tinha ninguem em mente, até que eu senti que queria dar ela a você, e abri aquela porta onde você estava tocando teclado, te ver sorrindo daquele jeito me conquistou para que eu quisesse vê-la assim mais vezes.
         </p>
         <p className="letter-signoff">
-          Feliz aniversário, Momozi. Que esse novo ano seja tão intenso,
-          tão engraçado e tão nosso quanto hoje já é.
+          Com amor, Eu. 
         </p>
       </div>
     </motion.section>
@@ -342,30 +424,11 @@ function BibleVerseSection() {
       variants={reveal}
       style={{ textAlign: "center", paddingBottom: "40px" }}
     >
-      <div style={{
-        backgroundColor: "var(--color-bg-soft)",
-        padding: "32px",
-        borderRadius: "20px",
-        border: "1px solid var(--color-pink-soft)",
-        maxWidth: "600px",
-        margin: "0 auto"
-      }}>
-        <p style={{
-          fontStyle: "italic",
-          fontSize: "1.2rem",
-          lineHeight: "1.8",
-          color: "var(--color-cream)",
-          margin: "0 0 16px 0"
-        }}>
+      <div className="bible-verse">
+        <p>
           "O amor é paciente, o amor é bondoso. Não inveja, não se vangloria, não se orgulha. Não maltrata, não procura seus interesses, não se ira facilmente, não guarda rancor. O amor não se alegra com a injustiça, mas se alegra com a verdade. Tudo sofre, tudo crê, tudo espera, tudo suporta."
         </p>
-        <span style={{
-          fontWeight: "700",
-          color: "var(--color-pink)",
-          fontSize: "0.95rem",
-          textTransform: "uppercase",
-          letterSpacing: "0.05em"
-        }}>
+        <span className="verse-citation">
           1 Coríntios 13:4-7
         </span>
       </div>
@@ -458,7 +521,7 @@ function MusicSection() {
           <Eyebrow>Trilha sonora</Eyebrow>
           <h2 className="section-title">A canção que é a nossa</h2>
           <p>
-            Muitos casais tem uma musica própria, eu acho, uma música tema, e aparentemente a nossa é essa que está tocando (se você tiver clicado no botão de ouvir música). A primeira vez que ouvi ela, eu estava com muita coisa na cabeça, e as emoções acabaram abafando a voz da cantora, e eu nem entendi quase nada da primeira vez... Quando a gente se despediu, que eu voltei para casa ouvindo a música, e prestei mais atenção na Letra, eu até me arrepiei, e passei a noite toda ouvindo e com um sorriso que só sumiu quando dormi. Que achado.
+            Muitos casais tem uma musica própria, eu acho, uma música tema, e aparentemente a nossa é essa que está tocando (se você tiver clicado no botão de ouvir música). A primeira vez que ouvi ela, eu estava com muita coisa na cabeça, e as emoções acabaram abafando a voz da cantora, e eu nem entendi quase nada da primeira vez... Quando a gente se despediu, que eu voltou para casa ouvindo a música, e prestei mais atenção na Letra, eu até me arrepiei, e passei a noite toda ouvindo e com um sorriso que só sumiu quando dormi. Que achado.
           </p>
         </div>
       </div>
@@ -597,6 +660,37 @@ function FooterSection() {
 }
 
 export default function BirthdayPage() {
+  const [view, setView] = useState<"landing" | "game">("landing");
+
+  if (view === "game") {
+    return (
+      <div className="app" style={{ padding: "20px 10px" }}>
+        <div style={{ maxWidth: "600px", margin: "0 auto 15px auto", textAlign: "left" }}>
+          <button 
+            onClick={() => setView("landing")} 
+            className="btn"
+            style={{
+              background: "rgba(255, 255, 255, 0.2)",
+              backdropFilter: "blur(5px)",
+              border: "1px solid rgba(255, 255, 255, 0.4)",
+              color: "var(--color-text, #1e1217)",
+              padding: "8px 16px",
+              borderRadius: "50px",
+              cursor: "pointer",
+              fontWeight: 600,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px"
+            }}
+          >
+            ⬅ Voltar para Nossa História
+          </button>
+        </div>
+        <Popgame />
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <Toaster
@@ -619,12 +713,32 @@ export default function BirthdayPage() {
       <FallingHearts />
       <BackgroundMusic />
       <HeroSection />
+      <TimeCounter />
       <LetterSection />
       <BibleVerseSection />
       <UniverseSection />
       <MusicSection />
       <TimelineSection />
       <LovePhrasesSection />
+
+      <div style={{ textAlign: "center", margin: "10px 0 50px 0", position: "relative", zIndex: 99 }}>
+        <button 
+          onClick={() => setView("game")} 
+          className="btn btn-primary"
+          style={{ 
+            display: "inline-flex", 
+            alignItems: "center", 
+            gap: "10px", 
+            padding: "16px 32px",
+            fontSize: "1.1rem",
+            cursor: "pointer"
+          }}
+        >
+          <span>Coletar Pipoca com a Momozi</span>
+          <span style={{ fontSize: "1.3rem" }}>🍿</span>
+        </button>
+      </div>
+
       <FooterSection />
     </div>
   );
