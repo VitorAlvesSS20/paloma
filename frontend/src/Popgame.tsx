@@ -13,7 +13,7 @@ interface Popcorn {
   rotation: number;
 }
 
-interface Heart {
+interface HeartParticle {
   id: number;
   x: number;
   y: number;
@@ -24,41 +24,49 @@ interface PopgameProps {
 }
 
 export default function Popgame({ onBackToMenu }: PopgameProps) {
-  const [gameState, setGameState] = useState<"start" | "playing" | "gameover" | "victory">("start");
+  const [gameState, setGameState] = useState<"start" | "playing" | "victory">("start");
   const [score, setScore] = useState<number>(0);
-  const [lives, setLives] = useState<number>(3);
   const [highScore, setHighScore] = useState<number>(() => {
     return Number(localStorage.getItem("popcorn_highscore")) || 0;
   });
   const [popcorns, setPopcorns] = useState<Popcorn[]>([]);
-  const [hearts, setHearts] = useState<Heart[]>([]);
+  const [captureParticles, setCaptureParticles] = useState<HeartParticle[]>([]);
 
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const bucketRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
+  // Otimização: Refs para usar dentro do loop de física sem causar re-renderizações ou re-crições de funções
   const bucketXRef = useRef<number>(50);
-  const stateRef = useRef({ gameState, score, lives });
+  const gameStateRef = useRef(gameState);
+  const highScoreRef = useRef(highScore);
 
+  // Sincroniza refs com estados
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
+
+  useEffect(() => {
+    highScoreRef.current = highScore;
+  }, [highScore]);
+
+  // Bloqueia scroll do corpo
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = originalOverflow;
     };
   }, []);
 
-  useEffect(() => {
-    stateRef.current = { gameState, score, lives };
-  }, [gameState, score, lives]);
-
+  // Condição de vitória
   useEffect(() => {
     if (score >= 100 && gameState === "playing") {
       setGameState("victory");
     }
   }, [score, gameState]);
 
+  // Gerenciamento de Áudio
   useEffect(() => {
     audioRef.current = new Audio(backgroundMusic);
     audioRef.current.loop = true;
@@ -77,16 +85,15 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
     if (gameState === "playing") {
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch((err) => console.log("Interação necessária para tocar áudio:", err));
-    } else if (gameState === "gameover" || gameState === "victory") {
+    } else if (gameState === "victory") {
       audioRef.current.pause();
     }
   }, [gameState]);
 
   const startGame = () => {
     setScore(0);
-    setLives(3);
     setPopcorns([]);
-    setHearts([]);
+    setCaptureParticles([]);
     bucketXRef.current = 50;
     if (bucketRef.current) {
       bucketRef.current.style.left = "50%";
@@ -95,7 +102,7 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
   };
 
   const updateBucketPosition = (clientX: number) => {
-    if (stateRef.current.gameState !== "playing" || !gameAreaRef.current || !bucketRef.current) return;
+    if (gameStateRef.current !== "playing" || !gameAreaRef.current || !bucketRef.current) return;
     const rect = gameAreaRef.current.getBoundingClientRect();
     const relativeX = ((clientX - rect.left) / rect.width) * 100;
     const clampedX = Math.max(5, Math.min(95, relativeX));
@@ -114,6 +121,7 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
     }
   };
 
+  // Spawn de pipocas
   useEffect(() => {
     if (gameState !== "playing") return;
 
@@ -124,60 +132,70 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
           id: Date.now() + Math.random(),
           x: Math.random() * 90 + 5,
           y: -10,
-          speed: 0.4 + Math.random() * 0.25 + stateRef.current.score * 0.005, 
+          // Velocidade base ligeiramente maior para compensar a falta de perda
+          speed: 0.5 + Math.random() * 0.3 + score * 0.006, 
           size: 24 + Math.random() * 12,
           rotation: Math.random() * 360,
         },
       ]);
-    }, 950);
+    }, 850); // Spawn ligeiramente mais rápido
 
     return () => clearInterval(interval);
-  }, [gameState]);
+  }, [gameState, score]);
 
+  // Loop de Física Otimizado
   useEffect(() => {
-    if (gameState !== "playing") return;
-
     let animationFrameId: number;
 
     const updatePhysics = () => {
-      if (stateRef.current.gameState !== "playing") return;
+      // Usa refs para checar estado atual sem depender do closure
+      if (gameStateRef.current !== "playing") {
+        animationFrameId = requestAnimationFrame(updatePhysics);
+        return;
+      }
 
       setPopcorns((prevPopcorns: Popcorn[]) => {
         const updated: Popcorn[] = [];
+        let scoreChange = 0;
+        const newParticles: HeartParticle[] = [];
 
         for (const pop of prevPopcorns) {
           const nextY = pop.y + pop.speed;
 
+          // Colisão com o balde
           if (nextY > 84 && nextY < 90) {
             const distance = Math.abs(pop.x - bucketXRef.current);
             if (distance < 10) {
-              setScore((s: number) => {
-                // Aqui a pontuação passa a aumentar de 2 em 2
-                const newScore = s + 2; 
-                if (newScore > highScore) {
-                  setHighScore(newScore);
-                  localStorage.setItem("popcorn_highscore", String(newScore));
-                }
-                return newScore;
-              });
-
-              setHearts((h: Heart[]) => [...h, { id: Date.now() + Math.random(), x: pop.x, y: 78 }]);
-              continue;
+              scoreChange += 2;
+              newParticles.push({ id: Date.now() + Math.random(), x: pop.x, y: 78 });
+              continue; // Coletada, não adiciona ao array updated
             }
           }
 
+          // Pipoca caiu fora
           if (nextY > 102) {
-            setLives((currentLives) => {
-              const remainingLives = currentLives - 1;
-              if (remainingLives <= 0) {
-                setTimeout(() => setGameState("gameover"), 0);
-              }
-              return remainingLives;
-            });
-            continue;
+            scoreChange -= 1; // Perde 1 ponto
+            continue; // Caiu, não adiciona ao array updated
           }
 
           updated.push({ ...pop, y: nextY });
+        }
+
+        // Atualiza pontuação e recorde de uma vez
+        if (scoreChange !== 0) {
+          setScore((s: number) => {
+            const newScore = Math.max(0, s + scoreChange); // Garante que não fique negativo
+            if (newScore > highScoreRef.current) {
+              highScoreRef.current = newScore;
+              setHighScore(newScore);
+              localStorage.setItem("popcorn_highscore", String(newScore));
+            }
+            return newScore;
+          });
+        }
+
+        if (newParticles.length > 0) {
+          setCaptureParticles((h) => [...h, ...newParticles]);
         }
 
         return updated;
@@ -188,15 +206,16 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
 
     animationFrameId = requestAnimationFrame(updatePhysics);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [gameState, highScore]);
+  }, []); // Roda apenas uma vez no mount para iniciar o loop
 
+  // Limpeza de partículas visual de captura
   useEffect(() => {
-    if (hearts.length === 0) return;
+    if (captureParticles.length === 0) return;
     const timeout = setTimeout(() => {
-      setHearts((prev: Heart[]) => prev.slice(1));
+      setCaptureParticles((prev) => prev.slice(1));
     }, 800);
     return () => clearTimeout(timeout);
-  }, [hearts]);
+  }, [captureParticles]);
 
   return (
     <div
@@ -226,11 +245,8 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
         <div className="popgame-bg-stripe" />
 
         <div className="popgame-hud">
-          <div className="popgame-hud-card" style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-            <span>🍿 Pipocas: {score}/100</span>
-            <span style={{ letterSpacing: "2px" }}>
-              {"❤️".repeat(Math.max(0, lives))}{"🖤".repeat(Math.max(0, 3 - lives))}
-            </span>
+          <div className="popgame-hud-card">
+            🍿 Pipocas: {score}/100
           </div>
           <div className="popgame-hud-card">🏆 Recorde: {highScore}</div>
         </div>
@@ -252,16 +268,17 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
             ))}
         </AnimatePresence>
 
+        {/* Partículas visuais de captura */}
         <AnimatePresence>
-          {hearts.map((heart) => (
+          {captureParticles.map((particle) => (
             <motion.div
-              key={heart.id}
+              key={particle.id}
               className="popgame-heart"
               initial={{ opacity: 1, y: 0, scale: 0.8 }}
               animate={{ opacity: 0, y: -80, scale: 1.5 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              style={{ left: `${heart.x}%` }}
+              style={{ left: `${particle.x}%` }}
             >
               ❤️
             </motion.div>
@@ -287,7 +304,7 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
             >
               <h2 className="popgame-start-title">Piquenique da Pipoca! 🍿</h2>
               <p className="popgame-start-desc">
-                Mova o mouse ou deslize o dedo para controlar o balde. Você tem 3 corações, tente coletar 100 pipocas para ajudar a alquimista Violeta!
+                Mova o mouse ou deslize o dedo para controlar o balde. Tente coletar 100 pipocas para ajudar a alquimista Violeta! Cuidado: se deixar cair, perde pontos!
               </p>
               <button 
                 onClick={startGame} 
@@ -305,58 +322,6 @@ export default function Popgame({ onBackToMenu }: PopgameProps) {
               >
                 Começar Jogo
               </button>
-            </motion.div>
-          )}
-
-          {gameState === "gameover" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              className="popgame-screen-gameover"
-            >
-              <span className="popgame-gameover-icon">💔</span>
-              <h2 className="popgame-gameover-title">Fim de Jogo!</h2>
-              <p className="popgame-gameover-desc">
-                As vidas acabaram e algumas pipocas mágicas escaparam. Você coletou {score} pipocas!
-              </p>
-              <div style={{ display: "flex", gap: "15px", flexDirection: "column", width: "100%", maxWidth: "280px" }}>
-                <button 
-                  onClick={startGame}
-                  style={{ 
-                    padding: "14px 28px", 
-                    width: "100%",
-                    background: "linear-gradient(135deg, #ff4d7d 0%, #b65eff 100%)",
-                    border: "none",
-                    color: "#fff",
-                    borderRadius: "50px",
-                    fontWeight: 800,
-                    fontSize: "1rem",
-                    cursor: "pointer",
-                    boxShadow: "0 10px 20px rgba(255, 77, 125, 0.3)"
-                  }}
-                >
-                  Tentar Novamente
-                </button>
-                {onBackToMenu && (
-                  <button 
-                    onClick={onBackToMenu}
-                    style={{ 
-                      padding: "14px 28px", 
-                      width: "100%",
-                      background: "rgba(255, 255, 255, 0.15)",
-                      border: "1px solid rgba(255, 255, 255, 0.3)",
-                      color: "#fff",
-                      borderRadius: "50px",
-                      fontWeight: 700,
-                      fontSize: "1rem",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Voltar ao Menu
-                  </button>
-                )}
-              </div>
             </motion.div>
           )}
 

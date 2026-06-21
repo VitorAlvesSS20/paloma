@@ -1,36 +1,30 @@
 @import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;500;600;700;800;900&display=swap");
 
 :root {
-  --color-primary: #ff4d7d;       
-  --color-primary-dark: #d61f50;  
-  --color-pink-light: #fff0f3;    
+  --color-primary: #ff4d7d;
+  --color-primary-dark: #d61f50;
+  --color-pink-light: #fff0f3;
   --color-pink-glow: rgba(255, 77, 125, 0.25);
   --color-pink-neon: rgba(255, 77, 125, 0.6);
-  
-  --color-bg: #fbf8f9;            
-  --color-lavender: #f6f0ff;       
-  --color-sky: #f0f7fa;           
-  --color-mint: #effaf8;          
-  
-  --color-text: #1e1217;          
-  --color-text-muted: #5c4750;    
+  --color-bg: #fbf8f9;
+  --color-lavender: #f6f0ff;
+  --color-sky: #f0f7fa;
+  --color-mint: #effaf8;
+  --color-text: #1e1217;
+  --color-text-muted: #5c4750;
   --color-white: #ffffff;
-  
   --gradient-primary: linear-gradient(135deg, #ff4d7d 0%, #ff6b8b 50%, #b65eff 100%);
   --gradient-btn-hover: linear-gradient(135deg, #d61f50 0%, #ff4d7d 100%);
   --gradient-bg-hero: radial-gradient(circle at 50% 0%, #fcf0ff 0%, #fbf8f9 70%);
   --gradient-glass-border: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 77, 125, 0.2) 100%);
-
   --candy-border: 1px solid rgba(255, 77, 125, 0.25);
   --glass-border: 1px solid rgba(255, 255, 255, 0.6);
   --glass-border-heavy: 1px solid rgba(255, 77, 125, 0.3);
   --candy-shadow: 0 12px 40px rgba(35, 23, 29, 0.04);
-  
   --glass-shadow: 0 30px 60px rgba(35, 23, 29, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.6);
   --3d-shadow-premium: 0 20px 50px rgba(255, 77, 125, 0.15), 0 4px 12px rgba(35, 23, 29, 0.04);
-  
   --font-sans: "Poppins", sans-serif;
-  --max-width: 1040px; 
+  --max-width: 1040px;
   --section-padding: clamp(40px, 6vw, 80px) clamp(24px, 5vw, 64px);
 }
 
@@ -290,12 +284,12 @@ a:hover::after {
 }
 
 .scroll-cue img {
-  width: 190px;    
-  height: 230px;   
+  width: 190px;
+  height: 230px;
   border-radius: 4px;
   object-fit: cover;
   background: #ffffff;
-  padding: 12px 12px 40px 12px; 
+  padding: 12px 12px 40px 12px;
   border: var(--glass-border);
   box-shadow: 0 20px 50px rgba(35, 23, 29, 0.12), 0 4px 10px rgba(0,0,0,0.05);
   transform: rotate(-3deg) perspective(800px) rotateX(4deg);
@@ -355,7 +349,6 @@ a:hover::after {
   max-width: 62ch;
 }
 
-/* --- SEÇÃO BÍBLICA MELHORADA (CARD LUXO) --- */
 .bible-section {
   padding-top: 10px;
   padding-bottom: 25px;
@@ -373,10 +366,7 @@ a:hover::after {
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   border: 1px solid rgba(216, 180, 106, 0.4);
-  box-shadow: 
-    0 30px 70px rgba(35, 23, 29, 0.08),
-    inset 0 0 30px rgba(216, 180, 106, 0.06),
-    inset 0 1px 3px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 30px 70px rgba(35, 23, 29, 0.08), inset 0 0 30px rgba(216, 180, 106, 0.06), inset 0 1px 3px rgba(255, 255, 255, 0.7);
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -392,9 +382,7 @@ a:hover::after {
 .bible-verse:hover {
   transform: translateY(-5px) scale(1.015);
   border-color: rgba(216, 180, 106, 0.7);
-  box-shadow: 
-    0 40px 80px rgba(216, 180, 106, 0.15),
-    inset 0 0 40px rgba(216, 180, 106, 0.1);
+  box-shadow: 0 40px 80px rgba(216, 180, 106, 0.15), inset 0 0 40px rgba(216, 180, 106, 0.1);
 }
 
 .bible-verse p {
@@ -451,15 +439,13 @@ a:hover::after {
 .blob {
   position: absolute;
   border-radius: 50%;
-  animation: floatFluidBlob 14s infinite alternate ease-in-out;
 }
 
 .blob-0 { width: 280px; height: 280px; top: -60px; left: -40px; background: #ffe4eb; }
-.blob-1 { width: 300px; height: 300px; top: 15%; right: -60px; background: var(--color-lavender); animation-delay: -3.5s; }
-.blob-2 { width: 260px; height: 260px; bottom: -60px; left: 25%; background: var(--color-mint); animation-delay: -7s; }
-.blob-3 { width: 230px; height: 230px; bottom: 12%; right: 8%; background: var(--color-sky); animation-delay: -10.5s; }
+.blob-1 { width: 300px; height: 300px; top: 15%; right: -60px; background: var(--color-lavender); }
+.blob-2 { width: 260px; height: 260px; bottom: -60px; left: 25%; background: var(--color-mint); }
+.blob-3 { width: 230px; height: 230px; bottom: 12%; right: 8%; background: var(--color-sky); }
 
-/* --- CARTINHA REALISTA MELHORADA --- */
 .letter-section {
   padding-bottom: 20px;
 }
@@ -467,15 +453,11 @@ a:hover::after {
 .letter-body {
   position: relative;
   background: #faf6ee;
-  background-image: 
-    linear-gradient(rgba(224, 215, 196, 0.6) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(224, 215, 196, 0.6) 1px, transparent 1px);
   background-size: 100% 2.2rem;
   padding: 50px 50px 40px 75px;
   border-radius: 4px;
-  box-shadow: 
-    0 2px 4px rgba(0,0,0,0.02),
-    0 15px 45px rgba(54, 45, 40, 0.08),
-    inset 0 0 60px rgba(226, 212, 183, 0.3);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02), 0 15px 45px rgba(54, 45, 40, 0.08), inset 0 0 60px rgba(226, 212, 183, 0.3);
   border-left: 2px solid rgba(214, 52, 71, 0.15);
   overflow: hidden;
 }
@@ -588,13 +570,12 @@ a:hover::after {
 
 .vinyl {
   position: relative;
-  width: 160px; 
-  height: 160px; 
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   background: radial-gradient(circle, #3d2530 15%, #1a0f14 50%, #050204 100%);
   box-shadow: 0 20px 45px rgba(35, 23, 29, 0.2), inset 0 0 15px rgba(0,0,0,0.8);
   border: 2px solid rgba(255, 255, 255, 0.1);
-  animation: smoothSpin 15s infinite linear;
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -775,6 +756,14 @@ a:hover::after {
   margin-bottom: 35px;
 }
 
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
 .particle {
   position: absolute;
   bottom: -20px;
@@ -782,7 +771,25 @@ a:hover::after {
   background: var(--gradient-primary);
   opacity: 0.35;
   pointer-events: none;
-  animation: floatUpElegant 9s infinite linear;
+}
+
+.surprise-button-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.burst-heart {
+  position: absolute;
+  bottom: 100%;
+  font-size: 1.5rem;
+  pointer-events: none;
 }
 
 .footer-section {
@@ -839,19 +846,6 @@ a:hover::after {
 
 @keyframes shimmerEffect {
   100% { left: 150%; }
-}
-
-@keyframes floatFluidBlob {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  50% { transform: translate(50px, -35px) scale(1.08) rotate(6deg); }
-  100% { transform: translate(-25px, 15px) scale(0.96) rotate(-4deg); }
-}
-
-@keyframes floatUpElegant {
-  0% { transform: translateY(0) scale(0.7) translateX(0); opacity: 0; }
-  20% { opacity: 0.4; }
-  50% { transform: translateY(-50vh) scale(0.5) translateX(20px); }
-  100% { transform: translateY(-105vh) scale(0.2) translateX(-20px); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

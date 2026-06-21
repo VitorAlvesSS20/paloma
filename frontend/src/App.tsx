@@ -9,13 +9,21 @@ import {
 import toast, { Toaster } from "react-hot-toast";
 import "./index.css";
 import carinhoso from "./assets/carinhoso.mp3";
-import Popgame from "./Popgame"; 
+import Popgame from "./Popgame";
+import Playlist from "./Playlist"; // Importando a nova página de Playlist ☕
+
+// Importação dos novos assets de imagem
+import paloma from "./assets/paloma.png";
+import jenga from "./assets/jenga.png";
+import stranger from "./assets/stranger.png";
+import caminhada from "./assets/caminhada.png";
+import filminho from "./assets/filminho.png";
 
 interface Milestone {
   chapter: string;
   title: string;
   description: string;
-  image: string; 
+  image: string;
 }
 
 const MILESTONES: Milestone[] = [
@@ -24,28 +32,28 @@ const MILESTONES: Milestone[] = [
     title: "Como tudo começou",
     description:
       "Lembra quando você tava conversando com o João Paulo e eu apareci de repente? Eu queria falar com ele, mas quando percebi, estava conversando mais com você, e então veio nosso primeiro joguinho, o Jenga, um joguinho sobre equilibrio que, de alguma forma, se tornou a metáfora perfeita pro que a gente tem hoje, e reutilizar as bases para construir uma torre mais alta... Enfim, que bom que você apareceu naquele dia, né?",
-    image: "https://media.discordapp.net/attachments/1462535091342541005/1516779659696537700/723647c652c3f7eb02830797993a6c2f.jpg?ex=6a33e2a3&is=6a329123&hm=311afd8c18c44fadb73b09a7e2c38c82c53bb2042b286319339d01057082158e&=&format=webp&width=521&height=695", 
+    image: jenga,
   },
   {
     chapter: "Capítulo 2",
     title: "Netflix na biblioteca",
     description:
       "Lembra quando a gente ia pra biblioteca de novo ficar assistindo coisinhas, Em principal o Stranger Things... Praticamente todo dia eu ia pra lá conferir se você estava, as vezes eu chegava tão cedo que ia embora da biblioteca e você aparecia depois, e inclusive, eu só assisti tudo por causa de você, quería ter visto tudo contigo, mas acontece. Enfim, ainda bem que você gosta das mesmas séries que eu, né?",
-    image: "https://media.discordapp.net/attachments/1462535091342541005/1516779660095000616/fb72cea909cf79e9e6899ceae0dffb49.jpg?ex=6a33e2a3&is=6a329123&hm=75b18db006c01d71c8ad7c874f1155504775f8c9afc3bc8075e8528ce88a6604&=&format=webp&width=695&height=695", 
+    image: stranger,
   },
   {
     chapter: "Capítulo 3",
     title: "Tempo de qualidade",
     description:
-      "Tem casal que vai pra festas, beber... A gente, faz caminhada juntos na BR, ou pelo menos fazia né, foi bom enquanto durou, e certamente foi um forte pilar na nossa  relação, passar um tempinho com você enquanto damos a volta pela cidade quase todo dia só fez eu te amar mais ainda. E em um dia como qualquer outro, você apareceu com aquela Cartinha... decisiva, que iria decidir nosso futuro, e então finalmente eu te pedi em namoro, para concretizar o que a gente estava sentindo, e era tanto que eu nem sabia como reagir, apenas concordava sabendo que teria uma vida feliz ao seu lado.",
-    image: "https://media.discordapp.net/attachments/1462535091342541005/1516781946074566867/32b816a3fea967ec72be6a7782353a0c.jpg?ex=6a33e4c4&is=6a329344&hm=e2926be56c4ac8161a6c7898b094263a487d469eccf3a1f6d67f4ff925efe2d9&=&format=webp&width=538&height=825", 
+      "Tem casal que vai pra festas, beber... A gente, faz caminhada juntos na BR, ou pelo menos fazia né, foi bom enquanto durou, e certamente foi um forte pilar na nossa relação, passar um tempinho com você enquanto damos a volta pela cidade quase todo dia só fez eu te amar mais ainda. E em um dia como qualquer outro, você apareceu com aquela Cartinha... decisiva, que iria decidir nosso futuro, e então finalmente eu te pedi em namoro, para concretizar o que a gente estava sentindo, e era tanto que eu nem sabia como reagir, apenas concordava sabendo que teria uma vida feliz ao seu lado.",
+    image: caminhada,
   },
   {
     chapter: "Capítulo 4",
     title: "Filminho",
     description:
       "Trazendo agora para os dias de hoje, ignorando os 'nadas', não há lugar melhor para se estar do que com você na caminha com espaço quase suficiente para nós dois, assistindo alguma coisa no notebook enquanto come, geralmente pipoca, ou salgado, é o refúgio após um dia cansativo de trabalho.",
-    image: "https://media.discordapp.net/attachments/1462535091342541005/1516784643347583136/8f215943-c445-42bb-8967-07b9c4fea6b4.jpg?ex=6a33e747&is=6a3295c7&hm=cc38ff58c9ac1b30fbad6860520eee77dc3c76679991f8832e88c04c3b8db0cf&=&format=webp&width=901&height=825", 
+    image: filminho,
   },
 ];
 
@@ -109,55 +117,6 @@ function FloatingParticles() {
             ease: "linear",
           }}
         />
-      ))}
-    </div>
-  );
-}
-
-interface FallingHeartType {
-  id: number;
-  left: number;
-  delay: number;
-  duration: number;
-  size: number;
-}
-
-function FallingHearts() {
-  const reduceMotion = useReducedMotion();
-  const hearts = useMemo<FallingHeartType[]>(() => {
-    if (reduceMotion) return [];
-    return Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      delay: Math.random() * 10,
-      duration: 8 + Math.random() * 8,
-      size: 14 + Math.random() * 14,
-    }));
-  }, [reduceMotion]);
-
-  if (reduceMotion) return null;
-
-  return (
-    <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 1, overflow: "hidden" }} aria-hidden="true">
-      {hearts.map((h) => (
-        <motion.span
-          key={h.id}
-          style={{
-            position: "absolute",
-            left: `${h.left}%`,
-            fontSize: `${h.size}px`,
-          }}
-          initial={{ y: "-10vh", opacity: 0 }}
-          animate={{ y: "110vh", opacity: [0, 1, 1, 0] }}
-          transition={{
-            duration: h.duration,
-            delay: h.delay,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
-          ❤️
-        </motion.span>
       ))}
     </div>
   );
@@ -370,7 +329,7 @@ function HeroSection() {
         >
           <span className="scroll-cue-line" />
           <img 
-            src="https://media.discordapp.net/attachments/1462535091342541005/1516786084573614120/491843294_669239965969130_2342993592363884947_n.png?ex=6a33e89f&is=6a32971f&hm=6a46464b86b2d5a559edfe59d740ce3b3f5429155822cdaf2074f3b88015f9dd&=&format=webp&quality=lossless&width=800&height=800" 
+            src={paloma} 
             alt="Foto P" 
           />
         </motion.div>
@@ -521,7 +480,7 @@ function MusicSection() {
           <Eyebrow>Trilha sonora</Eyebrow>
           <h2 className="section-title">A canção que é a nossa</h2>
           <p>
-            Muitos casais tem uma musica própria, eu acho, uma música tema, e aparentemente a nossa é essa que está tocando (se você tiver clicado no botão de ouvir música). A primeira vez que ouvi ela, eu estava com muita coisa na cabeça, e as emoções acabaram abafando a voz da cantora, e eu nem entendi quase nada da primeira vez... Quando a gente se despediu, que eu voltou para casa ouvindo a música, e prestei mais atenção na Letra, eu até me arrepiei, e passei a noite toda ouvindo e com um sorriso que só sumiu quando dormi. Que achado.
+            Many casais tem uma musica própria, eu acho, uma música tema, e aparentemente a nossa é essa que está tocando (se você tiver clicado no botão de ouvir música). A primeira vez que ouvi ela, eu estava com muita coisa na cabeça, e as emoções acabaram abafando a voz da cantora, e eu nem entendi quase nada da primeira vez... Quando a gente se despediu, que eu voltou para casa ouvindo a música, e prestei mais atenção na Letra, eu até me arrepiei, e passei a noite toda ouvindo e com um sorriso que só sumiu quando dormi. Que achado.
           </p>
         </div>
       </div>
@@ -565,7 +524,7 @@ function TimelineSection() {
   );
 }
 
-interface Heart {
+interface LovePhraseHeart {
   id: number;
   left: number;
   delay: number;
@@ -574,12 +533,12 @@ interface Heart {
 function LovePhrasesSection() {
   const reveal = useReveal();
   const [clicks, setClicks] = useState(0);
-  const [hearts, setHearts] = useState<Heart[]>([]);
+  const [hearts, setHearts] = useState<LovePhraseHeart[]>([]);
   const reduceMotion = useReducedMotion();
 
   const spawnHearts = useCallback(() => {
     if (reduceMotion) return;
-    const newHearts: Heart[] = Array.from({ length: 10 }, (_, i) => ({
+    const newHearts: LovePhraseHeart[] = Array.from({ length: 10 }, (_, i) => ({
       id: Date.now() + i,
       left: 30 + Math.random() * 40,
       delay: Math.random() * 0.4,
@@ -597,7 +556,7 @@ function LovePhrasesSection() {
 
     if (nextCount % MESSAGES.length === 0) {
       toast.success(
-        `Já se foram ${nextCount} mimos em texto — e meu amor por você continua crescendo.`,
+        `Já se foram ${nextCount} mimos em text — e meu amor por você continua crescendo.`,
         { duration: 5000 }
       );
       spawnHearts();
@@ -660,8 +619,19 @@ function FooterSection() {
 }
 
 export default function BirthdayPage() {
-  const [view, setView] = useState<"landing" | "game">("landing");
+  // Atualizado para incluir a view "playlist"
+  const [view, setView] = useState<"landing" | "game" | "playlist">("landing");
 
+  const popcornButtonVariants: Variants = {
+    hidden: { opacity: 0, y: 36 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.2 } 
+    },
+  };
+
+  // Redirecionamento da tela para o jogo
   if (view === "game") {
     return (
       <div className="app" style={{ padding: "20px 10px" }}>
@@ -691,6 +661,11 @@ export default function BirthdayPage() {
     );
   }
 
+  // Redirecionamento da tela para a Playlist/Cafeteria ☕
+  if (view === "playlist") {
+    return <Playlist onBack={() => setView("landing")} />;
+  }
+
   return (
     <div className="app">
       <Toaster
@@ -710,7 +685,6 @@ export default function BirthdayPage() {
           success: { iconTheme: { primary: "#d8b46a", secondary: "#2a0f1a" } },
         }}
       />
-      <FallingHearts />
       <BackgroundMusic />
       <HeroSection />
       <TimeCounter />
@@ -721,22 +695,70 @@ export default function BirthdayPage() {
       <TimelineSection />
       <LovePhrasesSection />
 
-      <div style={{ textAlign: "center", margin: "10px 0 50px 0", position: "relative", zIndex: 99 }}>
-        <button 
+      {/* Zona de botões especiais na parte inferior */}
+      <div style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        alignItems: "center", 
+        gap: "20px", 
+        margin: "10px 0 50px 0", 
+        position: "relative", 
+        zIndex: 99 
+      }}>
+        {/* Botão do Jogo */}
+        <motion.button 
           onClick={() => setView("game")} 
           className="btn btn-primary"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={popcornButtonVariants}
+          whileHover={{ 
+            scale: 1.05, 
+            y: -5,
+            transition: { type: "spring", stiffness: 400, damping: 10 } 
+          }}
+          whileTap={{ scale: 0.95 }}
           style={{ 
             display: "inline-flex", 
             alignItems: "center", 
             gap: "10px", 
             padding: "16px 32px",
             fontSize: "1.1rem",
-            cursor: "pointer"
+            cursor: "pointer",
+            boxShadow: "0 10px 25px rgba(216, 180, 106, 0.3)",
           }}
         >
           <span>Coletar Pipoca com a Momozi</span>
           <span style={{ fontSize: "1.3rem" }}>🍿</span>
-        </button>
+        </motion.button>
+
+        <motion.button 
+          onClick={() => setView("playlist")} 
+          className="btn btn-primary"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={popcornButtonVariants}
+          whileHover={{ 
+            scale: 1.05, 
+            y: -5,
+            transition: { type: "spring", stiffness: 400, damping: 10 } 
+          }}
+          whileTap={{ scale: 0.95 }}
+          style={{ 
+            display: "inline-flex", 
+            alignItems: "center", 
+            gap: "10px", 
+            padding: "16px 32px",
+            fontSize: "1.1rem",
+            cursor: "pointer",
+            boxShadow: "0 10px 25px rgba(216, 180, 106, 0.3)",
+          }}
+        >
+          <span>Ouvir Playlist</span>
+          <span style={{ fontSize: "1.3rem" }}>☕</span>
+        </motion.button>
       </div>
 
       <FooterSection />
